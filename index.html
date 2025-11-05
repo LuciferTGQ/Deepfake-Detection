@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deepfake Detection - AI换脸检测系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #333;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .page {
+            padding: 40px;
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a2a6c;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        h2 {
+            color: #b21f1f;
+            margin: 20px 0 15px;
+            font-size: 1.8rem;
+        }
+
+        p {
+            line-height: 1.6;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        ul {
+            margin-left: 20px;
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .btn {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 15px 20px;
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .checkbox-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .checkbox-container input {
+            margin-right: 10px;
+            transform: scale(1.3);
+        }
+
+        .upload-area {
+            border: 3px dashed #1a2a6c;
+            border-radius: 15px;
+            padding: 40px 20px;
+            text-align: center;
+            margin: 30px 0;
+            background-color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .upload-area:hover {
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: #1a2a6c;
+            margin-bottom: 20px;
+        }
+
+        .upload-text {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .file-info {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background-color: #5a6268;
+        }
+
+        .result-area {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f8f9fa;
+            display: none;
+        }
+
+        .progress-bar {
+            height: 10px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+            display: none;
+        }
+
+        .progress {
+            height: 100%;
+            background: linear-gradient(to right, #1a2a6c, #b21f1f);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 10px;
+            }
+
+            .page {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 主页 -->
+        <div id="home-page" class="page active">
+            <h1>Deepfake Detection</h1>
+            <h2>使用说明</h2>
+            <p>欢迎使用AI换脸检测系统！本系统基于深度学习技术，能够帮助您检测视频是否经过AI换脸处理。</p>
+
+            <h2>如何使用</h2>
+            <ul>
+                <li>点击"开始使用"按钮进入检测页面</li>
+                <li>上传您想要检测的视频文件（支持MP4、AVI、MOV格式，不超过500MB）</li>
+                <li>系统将自动分析视频并给出检测结果</li>
+                <li>检测结果将显示视频是否为AI换脸以及可信度</li>
+            </ul>
+
+            <h2>注意事项</h2>
+            <ul>
+                <li>确保上传的视频清晰度足够高，以提高检测准确率</li>
+                <li>处理时间取决于视频长度和系统负载，通常需要1-5分钟</li>
+                <li>检测结果仅供参考，不构成专业鉴定意见</li>
+                <li>请勿上传涉及个人隐私或敏感内容的视频</li>
+            </ul>
+
+            <button id="start-btn" class="btn">开始使用</button>
+
+            <div class="checkbox-container">
+                <input type="checkbox" id="agree-checkbox">
+                <label for="agree-checkbox">我已阅读并同意<a href="#" onclick="alert('用户协议内容将在这里显示')">用户协议</a>和<a href="#" onclick="alert('隐私政策内容将在这里显示')">隐私政策</a></label>
+            </div>
+        </div>
+
+        <!-- 应用页面 -->
+        <div id="app-page" class="page">
+            <h1>智能检测AI换脸</h1>
+
+            <div class="upload-area" id="upload-area">
+                <div class="upload-icon">📁</div>
+                <div class="upload-text">点击选择视频文件或拖放文件到此处</div>
+                <div class="file-info">支持格式：MP4, AVI, MOV | 最大文件大小：500MB</div>
+                <input type="file" id="file-input" accept="video/mp4,video/avi,video/quicktime" style="display: none;">
+            </div>
+
+            <div class="progress-bar" id="progress-bar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <div class="result-area" id="result-area">
+                <h2>检测结果</h2>
+                <div id="result-text">检测结果将在这里显示</div>
+            </div>
+
+            <button class="back-btn" id="back-btn">返回首页</button>
+        </div>
+    </div>
+
+    <script>
+        // 页面元素
+        const homePage = document.getElementById('home-page');
+        const appPage = document.getElementById('app-page');
+        const startBtn = document.getElementById('start-btn');
+        const backBtn = document.getElementById('back-btn');
+        const agreeCheckbox = document.getElementById('agree-checkbox');
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const progressBar = document.getElementById('progress-bar');
+        const progress = document.getElementById('progress');
+        const resultArea = document.getElementById('result-area');
+        const resultText = document.getElementById('result-text');
+
+        // 跳转到应用页面
+        startBtn.addEventListener('click', function() {
+            if (!agreeCheckbox.checked) {
+                alert('请先同意用户协议和隐私政策');
+                return;
+            }
+
+            homePage.classList.remove('active');
+            appPage.classList.add('active');
+        });
+
+        // 返回首页
+        backBtn.addEventListener('click', function() {
+            appPage.classList.remove('active');
+            homePage.classList.add('active');
+        });
+
+        // 文件上传相关功能
+        uploadArea.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        // 拖放功能
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'rgba(26, 42, 108, 0.1)';
+        });
+
+        uploadArea.addEventListener('dragleave', function() {
+            uploadArea.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+        });
+
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
+
+            if (e.dataTransfer.files.length) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        // 文件选择处理
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length) {
+                handleFile(fileInput.files[0]);
+            }
+        });
+
+        // 处理上传的文件
+        function handleFile(file) {
+            // 检查文件类型和大小
+            const validTypes = ['video/mp4', 'video/avi', 'video/quicktime'];
+            const maxSize = 500 * 1024 * 1024; // 500MB
+
+            if (!validTypes.includes(file.type)) {
+                alert('不支持的文件格式，请上传MP4、AVI或MOV格式的视频');
+                return;
+            }
+
+            if (file.size > maxSize) {
+                alert('文件大小超过500MB限制');
+                return;
+            }
+
+            // 显示文件信息
+            uploadArea.innerHTML = `
+                <div class="upload-icon">✅</div>
+                <div class="upload-text">已选择文件: ${file.name}</div>
+                <div class="file-info">文件大小: ${(file.size / (1024 * 1024)).toFixed(2)} MB</div>
+            `;
+
+            // 显示进度条
+            progressBar.style.display = 'block';
+            progress.style.width = '0%';
+
+            // 模拟上传和检测过程
+            simulateDetection(file);
+        }
+
+        // 模拟检测过程（实际项目中这里会调用后端API）
+        function simulateDetection(file) {
+            // 模拟上传进度
+            let progressValue = 0;
+            const progressInterval = setInterval(() => {
+                progressValue += Math.random() * 10;
+                if (progressValue >= 100) {
+                    progressValue = 100;
+                    clearInterval(progressInterval);
+
+                    // 模拟检测过程
+                    setTimeout(() => {
+                        showResult();
+                    }, 1000);
+                }
+                progress.style.width = `${progressValue}%`;
+            }, 200);
+        }
+
+        // 显示检测结果
+        function showResult() {
+            // 模拟随机结果（实际项目中这里会显示真实检测结果）
+            const isFake = Math.random() > 0.5;
+            const confidence = (Math.random() * 30 + 70).toFixed(2); // 70-100%的可信度
+
+            resultText.innerHTML = `
+                <p><strong>检测状态：</strong>分析完成</p>
+                <p><strong>检测结果：</strong>${isFake ? '疑似AI换脸视频' : '未检测到AI换脸痕迹'}</p>
+                <p><strong>可信度：</strong>${confidence}%</p>
+                <p><strong>分析时间：</strong>${new Date().toLocaleString()}</p>
+            `;
+
+            resultArea.style.display = 'block';
+            resultArea.style.backgroundColor = isFake ? 'rgba(178, 31, 31, 0.1)' : 'rgba(76, 175, 80, 0.1)';
+            resultArea.style.borderLeft = `5px solid ${isFake ? '#b21f1f' : '#4CAF50'}`;
+        }
+    </script>
+</body>
+</html>
