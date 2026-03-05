@@ -1,0 +1,174 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 全局样式 */
+@layer base {
+  html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  }
+  
+  body {
+    @apply antialiased;
+    background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+    min-height: 100vh;
+  }
+}
+
+/* 玻璃态效果 */
+@layer components {
+  .glass-card {
+    @apply bg-white/40 backdrop-blur-xl border border-white/30;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
+  .glass-button {
+    @apply bg-white/20 backdrop-blur-sm border border-white/30;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+  
+  .glass-button:hover {
+    @apply bg-white/30;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+}
+
+/* 自定义动画 */
+@layer utilities {
+  .animate-float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  .animate-pulse-slow {
+    animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .animate-bounce-slow {
+    animation: bounce 2s infinite;
+  }
+  
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-gray-100 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-gray-300 rounded-full hover:bg-gray-400;
+}
+
+/* 文件上传拖拽效果 */
+.upload-zone-dragover {
+  @apply border-blue-500 bg-blue-50/50;
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+}
+
+/* 进度条动画 */
+.progress-bar {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-bar::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* 结果卡片动画 */
+.result-card {
+  animation: slideInUp 0.6s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .glass-card {
+    @apply mx-4 p-6;
+  }
+  
+  .text-6xl {
+    @apply text-4xl;
+  }
+  
+  .text-7xl {
+    @apply text-5xl;
+  }
+}
+
+/* 无障碍性 */
+@media (prefers-reduced-motion: reduce) {
+  .animate-float,
+  .animate-pulse-slow,
+  .animate-bounce-slow,
+  .progress-bar::before {
+    animation: none;
+  }
+  
+  .glass-card,
+  .glass-button {
+    transition: none;
+  }
+}
+
+/* 高对比度模式 */
+@media (prefers-contrast: high) {
+  .glass-card {
+    @apply bg-white border-gray-400;
+  }
+  
+  .text-gray-600 {
+    @apply text-gray-800;
+  }
+  
+  .text-gray-500 {
+    @apply text-gray-700;
+  }
+}
