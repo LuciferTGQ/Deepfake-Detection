@@ -2,6 +2,12 @@
 
 一个基于深度学习的智能视频真伪检测平台，专为识别AI换脸（Deepfake）内容设计。
 
+## 当前实现说明（2026-03）
+
+- 正式联调前端: `webapp/`
+- `deepfake-detection/` 目录是纯 UI 演示版本（默认不调用后端接口）
+- 后端推理已改为适配器模式，可通过环境变量切换模型实现
+
 ## 项目信息
 
 - **项目类型**: 大学生创新创业训练计划（大创项目）
@@ -142,10 +148,16 @@ cd deepfake-detection
 
 ```bash
 cd backend
-pip install -r requirements.txt
+pip install -r requirements-prod.txt
 python models/train.py  # 训练占位模型（可选）
 python api/main.py
 ```
+
+可选环境变量：
+
+- `MODEL_NAME=cnn`（默认）或 `MODEL_NAME=xception_temporal_stub`
+- `MODEL_PATH=<weights_path>` 指定权重路径
+- `MAX_UPLOAD_BYTES=524288000` 上传大小限制（默认500MB）
 
 API服务运行在 `http://localhost:8000`
 
@@ -197,6 +209,15 @@ file: <video_file>
 
 ## 模型训练
 
+训练工作流已建议迁移到 `research/`，与部署后端分离。
+
+### 训练环境
+
+```bash
+cd research
+pip install -r requirements-train.txt
+```
+
 ### 训练占位模型（当前使用）
 
 ```bash
@@ -207,9 +228,9 @@ python models/train.py
 ### 训练真实模型
 
 1. 准备数据集（真实视频和Deepfake视频）
-2. 修改 `models/train.py` 中的数据加载逻辑
-3. 运行训练脚本
-4. 模型权重将保存到 `models/deepfake_detector.pth`
+2. 在 `research/` 下进行训练和评估
+3. 导出权重与预处理配置
+4. 使用 `MODEL_PATH` 将导出权重接入后端推理
 
 ---
 

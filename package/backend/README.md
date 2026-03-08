@@ -40,8 +40,10 @@ backend/
 
 ```bash
 cd backend
-pip install -r requirements.txt
+pip install -r requirements-prod.txt
 ```
+
+兼容说明：`requirements.txt` 保留历史依赖列表；推荐部署使用 `requirements-prod.txt`。
 
 ### 2. 训练模型（可选）
 
@@ -101,6 +103,16 @@ Content-Type: multipart/form-data
 }
 ```
 
+**错误响应示例**:
+```json
+{
+  "error": {
+    "code": "UNSUPPORTED_FILE_TYPE",
+    "message": "unsupported file extension: .txt. allowed: .avi, .mkv, .mov, .mp4"
+  }
+}
+```
+
 ## 模型说明
 
 ### 当前模型
@@ -120,6 +132,21 @@ DeepfakeDetectorCNN:
 - 特征提取: 4层卷积 + MaxPool
 - 分类器: 3层全连接网络
 - 输出: 2类概率 (真实/伪造)
+```
+
+### 模型切换
+
+推理层已支持适配器模式，可通过环境变量切换模型实现：
+
+```bash
+set MODEL_NAME=cnn
+set MODEL_PATH=backend\\models\\deepfake_detector.pth
+```
+
+占位实现可用于联调验证：
+
+```bash
+set MODEL_NAME=xception_temporal_stub
 ```
 
 ### 训练自己的模型

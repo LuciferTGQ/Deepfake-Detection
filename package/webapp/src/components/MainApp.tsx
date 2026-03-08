@@ -27,19 +27,20 @@ const MainApp: React.FC = () => {
   const handleStartAnalysis = async () => {
     if (!selectedFile) return
     console.log('开始分析文件:', selectedFile.name)
+    let timer: ReturnType<typeof setInterval> | null = null
     try {
       setError(null)
       setIsAnalyzing(true)
       setAnalysisProgress(0)
 
-      const timer = setInterval(() => {
+      timer = setInterval(() => {
         setAnalysisProgress(p => Math.min(90, p + Math.random()*15))
       }, 400)
 
       console.log('调用 analyzeVideo...')
       const { confidence, label } = await analyzeVideo(selectedFile)
       console.log('分析结果:', { confidence, label })
-      clearInterval(timer)
+      if (timer) clearInterval(timer)
 
       setAnalysisProgress(100)
       let status: 'very-trusted' | 'trusted' | 'untrusted'
@@ -48,10 +49,12 @@ const MainApp: React.FC = () => {
       else status = 'untrusted'
 
       setAnalysisResult({ confidence, status, message: label })
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('分析错误:', err)
-      setError(err.message || '分析失败')
+      const message = err instanceof Error ? err.message : '分析失败'
+      setError(message)
     } finally {
+      if (timer) clearInterval(timer)
       setIsAnalyzing(false)
     }
   }
